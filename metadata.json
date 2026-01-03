@@ -1,0 +1,7 @@
+{
+  "name": "Eden - Plant-Based Wellness",
+  "description": "A comprehensive digital nutrition blueprint focusing on dietary diversity through the 'Garden Approach' tracker, smart WFPB substitutions, and health education.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
