@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 export enum GardenCategory {
   FRUITS = 'Fruits',
   GRAINS = 'Grains',
@@ -31,6 +33,8 @@ export interface Recipe {
   isQuick: boolean;
   healthTip?: string;
   description: string;
+  imageUrl?: string;
+  tracks?: string[]; // Added for disease filtering
 }
 
 export interface ShoppingItem {
@@ -38,12 +42,7 @@ export interface ShoppingItem {
   name: string;
   category: string;
   purchased: boolean;
-}
-
-export interface PantryItem {
-  id: string;
-  name: string;
-  status: 'stocked' | 'low';
+  recipeId?: string;
 }
 
 export interface DiseaseTrack {

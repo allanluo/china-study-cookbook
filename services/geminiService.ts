@@ -7,16 +7,16 @@ export const getGreatExchange = async (input: string) => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `You are a WFPB nutrition expert based on Dr. LeAnne Campbell's "The Plant-Based Wellness App". 
-      Provide a Whole Food Plant-Based (WFPB) alternative for: "${input}". 
+      contents: `You are a WFPB nutrition expert. Provide a Whole Food Plant-Based (WFPB) alternative for: "${input}". 
+      
       Strict Rules:
       1. No Added Oil (Suggest water/broth sautéing or prune paste).
       2. No Refined Sugar (Suggest Sucanat or fruit).
-      3. Focus on plant parts (Grains, Legumes, Roots, etc.).
+      3. Focus on whole plant health.
       
       Provide:
-      1. The substitution name (e.g., "Prune Paste" or "Flax Egg").
-      2. The health reason based on the China Study findings.
+      1. The substitution name.
+      2. The health reason.
       3. A specific ratio or prep instruction.`,
       config: {
         responseMimeType: "application/json",
@@ -71,8 +71,7 @@ export const getHealthSearch = async (query: string) => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: `Explain how a WFPB diet (as defined in the China Study) impacts this health query: "${query}". 
-      Emphasize the prevention of chronic disease and the benefits of dietary fiber and plant protein over animal protein.`,
+      contents: `Explain how a WFPB diet impacts this query: "${query}". Emphasize clinical evidence and plant-based synergy.`,
       config: {
         tools: [{ googleSearch: {} }]
       }
@@ -88,7 +87,7 @@ export const getHealthSearch = async (query: string) => {
       sources: sources
     };
   } catch (error) {
-    return { text: "WFPB nutrition focuses on the synergy of whole plant parts for optimal health and chronic disease prevention.", sources: [] };
+    return { text: "WFPB nutrition focuses on the synergy of whole plant parts for optimal health.", sources: [] };
   }
 };
 
@@ -96,10 +95,40 @@ export const getIngredientHealthTip = async (ingredient: string) => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Provide one interesting, science-backed health fact about ${ingredient} specifically in the context of chronic disease prevention and WFPB nutrition. Keep it under 20 words. Example: 'One cup of broccoli has more vitamin C than an orange.'`,
+      contents: `Provide one interesting, science-backed health fact about ${ingredient} in a WFPB context. Keep it under 20 words.`,
     });
     return response.text.trim();
   } catch (error) {
-    return "Whole plant foods are naturally rich in fiber, antioxidants, and phytochemicals.";
+    return "Whole plant foods are naturally rich in fiber and antioxidants.";
+  }
+};
+
+export const generateRecipeImage = async (recipeName: string, description: string) => {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [
+          {
+            text: `A high-end food photography shot of a WFPB dish: ${recipeName}. ${description}. No meat, no oil. 8k resolution.`,
+          },
+        ],
+      },
+      config: {
+        imageConfig: {
+          aspectRatio: "1:1"
+        },
+      },
+    });
+
+    for (const part of response.candidates[0].content.parts) {
+      if (part.inlineData) {
+        return `data:image/png;base64,${part.inlineData.data}`;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Image Gen Error:", error);
+    return null;
   }
 };
